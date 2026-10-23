@@ -374,7 +374,8 @@ render();
 let unsub=null;
 const $gate=$("gate"),$app=$("app");
 $("loginBtn").addEventListener("click",async()=>{const p=new GoogleAuthProvider();p.setCustomParameters({prompt:"select_account"});
-  try{await signInWithPopup(auth,p)}catch(e){if(e&&/popup/.test(e.code||""))await signInWithRedirect(auth,p);else $("gateMsg").textContent="La connexion n'a pas abouti. Réessaie."}});
+  const say=e=>{const c=(e&&e.code)||"";$("gateMsg").textContent=c==="auth/configuration-not-found"||c==="auth/operation-not-allowed"?"La connexion Google n'est pas encore activée dans Firebase (Authentication → Sign-in method → Google).":c==="auth/unauthorized-domain"?"Ce site n'est pas encore autorisé dans Firebase (Authentication → Settings → Authorized domains).":c==="auth/popup-closed-by-user"||c==="auth/cancelled-popup-request"?"Connexion annulée.":"La connexion n'a pas abouti ("+(c||"erreur inconnue")+"). Réessaie."};
+  try{await signInWithPopup(auth,p)}catch(e){if(e&&e.code==="auth/popup-blocked"){try{await signInWithRedirect(auth,p)}catch(e2){say(e2)}}else say(e)}});
 const out=()=>signOut(auth);$("logoutBtn").addEventListener("click",out);$("logoutBtn2").addEventListener("click",out);
 onAuthStateChanged(auth,u=>{
   if(unsub){unsub();unsub=null}
