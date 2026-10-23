@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://piliwishlist.github.io/PiliWishList/sitemap.xml
